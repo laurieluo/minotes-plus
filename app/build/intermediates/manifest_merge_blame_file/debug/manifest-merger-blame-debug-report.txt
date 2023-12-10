@@ -1,0 +1,273 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<!--
+3 Copyright (c) 2010-2011, The MiCode Open Source Community (www.micode.net)
+4
+5     Licensed under the Apache License, Version 2.0 (the "License");
+6     you may not use this file except in compliance with the License.
+7     You may obtain a copy of the License at
+8
+9          http://www.apache.org/licenses/LICENSE-2.0
+10
+11     Unless required by applicable law or agreed to in writing, software
+12     distributed under the License is distributed on an "AS IS" BASIS,
+13     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14     See the License for the specific language governing permissions and
+15     limitations under the License.
+16-->
+17<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+18    package="net.micode.notes"
+19    android:versionCode="1"
+20    android:versionName="0.1" >
+21
+22    <uses-sdk
+22-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:23:5-44
+23        android:minSdkVersion="14"
+23-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:23:15-41
+24        android:targetSdkVersion="14" />
+25
+26    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+26-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:25:5-81
+26-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:25:22-78
+27    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+27-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:26:5-88
+27-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:26:22-85
+28    <uses-permission android:name="android.permission.INTERNET" />
+28-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:27:5-67
+28-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:27:22-64
+29    <uses-permission android:name="android.permission.READ_CONTACTS" />
+29-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:28:5-72
+29-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:28:22-69
+30    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+30-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:29:5-74
+30-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:29:22-71
+31    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+31-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:30:5-80
+31-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:30:22-77
+32    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+32-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:31:5-71
+32-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:31:22-68
+33    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+33-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:32:5-74
+33-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:32:22-71
+34    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+34-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:33:5-81
+34-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:33:22-78
+35
+36    <application
+36-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:35:5-149:19
+37        android:debuggable="true"
+38        android:extractNativeLibs="true"
+39        android:icon="@drawable/icon_app"
+39-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:36:9-42
+40        android:label="@string/app_name"
+40-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:37:9-41
+41        android:testOnly="true" >
+42        <activity
+42-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:38:9-51:20
+43            android:name="net.micode.notes.ui.NotesListActivity"
+43-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:39:13-49
+44            android:configChanges="keyboardHidden|orientation|screenSize"
+44-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:40:13-74
+45            android:label="@string/app_name"
+45-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:41:13-45
+46            android:launchMode="singleTop"
+46-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:42:13-43
+47            android:theme="@style/NoteTheme"
+47-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:43:13-45
+48            android:uiOptions="splitActionBarWhenNarrow"
+48-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:44:13-57
+49            android:windowSoftInputMode="adjustPan" >
+49-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:45:13-52
+50            <intent-filter>
+50-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:47:13-50:29
+51                <action android:name="android.intent.action.MAIN" />
+51-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:48:17-69
+51-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:48:25-66
+52
+53                <category android:name="android.intent.category.LAUNCHER" />
+53-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:49:17-77
+53-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:49:27-74
+54            </intent-filter>
+55        </activity>
+56        <activity
+56-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:53:9-81:20
+57            android:name="net.micode.notes.ui.NoteEditActivity"
+57-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:54:13-48
+58            android:configChanges="keyboardHidden|orientation|screenSize"
+58-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:55:13-74
+59            android:launchMode="singleTop"
+59-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:56:13-43
+60            android:theme="@style/NoteTheme" >
+60-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:57:13-45
+61            <intent-filter>
+61-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:59:13-64:29
+62                <action android:name="android.intent.action.VIEW" />
+62-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:60:17-69
+62-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:60:25-66
+63
+64                <category android:name="android.intent.category.DEFAULT" />
+64-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:61:17-76
+64-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:61:27-73
+65
+66                <data android:mimeType="vnd.android.cursor.item/text_note" />
+66-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:62:17-78
+66-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:62:23-75
+67                <data android:mimeType="vnd.android.cursor.item/call_note" />
+67-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:62:17-78
+67-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:62:23-75
+68            </intent-filter>
+69            <intent-filter>
+69-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:66:13-71:29
+70                <action android:name="android.intent.action.INSERT_OR_EDIT" />
+70-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:67:17-79
+70-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:67:25-76
+71
+72                <category android:name="android.intent.category.DEFAULT" />
+72-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:61:17-76
+72-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:61:27-73
+73
+74                <data android:mimeType="vnd.android.cursor.item/text_note" />
+74-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:62:17-78
+74-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:62:23-75
+75                <data android:mimeType="vnd.android.cursor.item/call_note" />
+75-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:62:17-78
+75-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:62:23-75
+76            </intent-filter>
+77            <intent-filter>
+77-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:73:13-76:29
+78                <action android:name="android.intent.action.SEARCH" />
+78-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:74:17-71
+78-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:74:25-68
+79
+80                <category android:name="android.intent.category.DEFAULT" />
+80-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:61:17-76
+80-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:61:27-73
+81            </intent-filter>
+82
+83            <meta-data
+83-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:78:13-80:54
+84                android:name="android.app.searchable"
+84-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:79:17-54
+85                android:resource="@xml/searchable" />
+85-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:80:17-51
+86        </activity>
+87
+88        <provider
+88-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:83:9-86:43
+89            android:name="net.micode.notes.data.NotesProvider"
+89-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:84:13-63
+90            android:authorities="micode_notes"
+90-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:85:13-47
+91            android:multiprocess="true" />
+91-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:86:13-40
+92
+93        <receiver
+93-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:88:9-100:20
+94            android:name="net.micode.notes.widget.NoteWidgetProvider_2x"
+94-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:89:13-57
+95            android:label="@string/app_widget2x2" >
+95-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:90:13-50
+96            <intent-filter>
+96-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:91:13-95:29
+97                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+97-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:92:17-84
+97-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:92:25-81
+98                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+98-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:93:17-85
+98-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:93:25-82
+99                <action android:name="android.intent.action.PRIVACY_MODE_CHANGED" />
+99-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:94:17-85
+99-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:94:25-82
+100            </intent-filter>
+101
+102            <meta-data
+102-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:97:13-99:58
+103                android:name="android.appwidget.provider"
+103-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:98:17-58
+104                android:resource="@xml/widget_2x_info" />
+104-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:99:17-55
+105        </receiver>
+106        <receiver
+106-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:101:9-114:20
+107            android:name="net.micode.notes.widget.NoteWidgetProvider_4x"
+107-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:102:13-57
+108            android:label="@string/app_widget4x4" >
+108-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:103:13-50
+109            <intent-filter>
+109-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:91:13-95:29
+110                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+110-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:92:17-84
+110-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:92:25-81
+111                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+111-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:93:17-85
+111-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:93:25-82
+112                <action android:name="android.intent.action.PRIVACY_MODE_CHANGED" />
+112-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:94:17-85
+112-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:94:25-82
+113            </intent-filter>
+114
+115            <meta-data
+115-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:97:13-99:58
+116                android:name="android.appwidget.provider"
+116-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:98:17-58
+117                android:resource="@xml/widget_4x_info" />
+117-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:99:17-55
+118        </receiver>
+119        <receiver android:name="net.micode.notes.ui.AlarmInitReceiver" >
+119-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:116:9-120:20
+119-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:116:19-55
+120            <intent-filter>
+120-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:117:13-119:29
+121                <action android:name="android.intent.action.BOOT_COMPLETED" />
+121-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:118:17-79
+121-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:118:25-76
+122            </intent-filter>
+123        </receiver>
+124        <receiver
+124-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:122:9-125:20
+125            android:name="net.micode.notes.ui.AlarmReceiver"
+125-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:123:13-61
+126            android:process=":remote" >
+126-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:124:13-38
+127        </receiver>
+128
+129        <activity
+129-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:127:9-132:20
+130            android:name="net.micode.notes.ui.AlarmAlertActivity"
+130-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:128:13-50
+131            android:label="@string/app_name"
+131-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:129:13-45
+132            android:launchMode="singleInstance"
+132-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:130:13-48
+133            android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar" >
+133-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:131:13-75
+134        </activity>
+135        <activity
+135-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:134:9-139:20
+136            android:name="net.micode.notes.ui.NotesPreferenceActivity"
+136-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:135:13-71
+137            android:label="@string/preferences_title"
+137-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:136:13-54
+138            android:launchMode="singleTop"
+138-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:137:13-43
+139            android:theme="@android:style/Theme.Holo.Light" >
+139-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:138:13-60
+140        </activity>
+141
+142        <service
+142-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:141:9-144:19
+143            android:name="net.micode.notes.gtask.remote.GTaskSyncService"
+143-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:142:13-74
+144            android:exported="false" >
+144-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:143:13-37
+145        </service>
+146
+147        <meta-data
+147-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:146:9-148:52
+148            android:name="android.app.default_searchable"
+148-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:147:13-58
+149            android:value=".ui.NoteEditActivity" />
+149-->/Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/AndroidManifest.xml:148:13-49
+150    </application>
+151
+152</manifest>

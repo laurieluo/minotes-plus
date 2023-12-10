@@ -1,0 +1,4 @@
+#Sun Dec 10 12:30:41 CST 2023
+base.0=/Users/laurieluo/AndroidStudioProjects/minotes/app/build/intermediates/dex/debug/mergeDexDebug/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

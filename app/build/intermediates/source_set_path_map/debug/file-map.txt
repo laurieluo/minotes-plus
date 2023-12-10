@@ -1,0 +1,7 @@
+net.micode.notes.app-pngs-0 /Users/laurieluo/AndroidStudioProjects/minotes/app/build/generated/res/pngs/debug
+net.micode.notes.app-resValues-1 /Users/laurieluo/AndroidStudioProjects/minotes/app/build/generated/res/resValues/debug
+net.micode.notes.app-packageDebugResources-2 /Users/laurieluo/AndroidStudioProjects/minotes/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+net.micode.notes.app-packageDebugResources-3 /Users/laurieluo/AndroidStudioProjects/minotes/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+net.micode.notes.app-merged_res-4 /Users/laurieluo/AndroidStudioProjects/minotes/app/build/intermediates/merged_res/debug
+net.micode.notes.app-debug-5 /Users/laurieluo/AndroidStudioProjects/minotes/app/src/debug/res
+net.micode.notes.app-main-6 /Users/laurieluo/AndroidStudioProjects/minotes/app/src/main/res

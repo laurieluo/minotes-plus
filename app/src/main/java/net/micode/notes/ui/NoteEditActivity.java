@@ -35,6 +35,8 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.BackgroundColorSpan;
+import android.text.InputType;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,6 +54,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import net.micode.notes.R;
 import net.micode.notes.data.Notes;
 import net.micode.notes.data.Notes.TextNote;
@@ -64,12 +67,15 @@ import net.micode.notes.ui.DateTimePickerDialog.OnDateTimeSetListener;
 import net.micode.notes.ui.NoteEditText.OnTextViewChangeListener;
 import net.micode.notes.widget.NoteWidgetProvider_2x;
 import net.micode.notes.widget.NoteWidgetProvider_4x;
+import net.micode.notes.tool.CryptoUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.crypto.SecretKey;
 
 
 public class NoteEditActivity extends Activity implements OnClickListener,
@@ -133,6 +139,8 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     private View mNoteEditorPanel;
 
     private WorkingNote mWorkingNote;
+
+    private CryptoUtils mCryptoUtils;
 
     private SharedPreferences mSharedPrefs;
     private int mFontSizeId;
@@ -507,6 +515,11 @@ public class NoteEditActivity extends Activity implements OnClickListener,
         } else {
             menu.findItem(R.id.menu_unpin_from_top).setVisible(false);
         }
+        if (mWorkingNote.encryptStatus()) {
+            menu.findItem(R.id.menu_decrypt_content).setVisible(false);
+        } else {
+            menu.findItem(R.id.menu_encrypt_content).setVisible(false);
+        }
         return true;
     }
 
@@ -552,17 +565,84 @@ public class NoteEditActivity extends Activity implements OnClickListener,
             mWorkingNote.unpinFromTop();
             mWorkingNote.setBgColorIdWithoutDate(ResourceParser.YELLOW);
         } else if (item.getItemId() == R.id.menu_encrypt_content) {
-            //encrypt content
-            if (mWorkingNote.encryptStatus()) {
+            mWorkingNote.encryptContent();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("输入密钥字符串");
 
-                mWorkingNote.encryptContent();
-                mNoteEditor.setText("111111111");
-            }
-            else {
-                mWorkingNote.decryptContent();
-                mNoteEditor.setText("22222222");
-            }
+            // 设置输入框
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+
+            // 设置确定按钮
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String keyString = input.getText().toString();
+                    CryptoUtils.setKeyString(keyString); // 更新密钥字符串
+
+                    try {
+                        SecretKey key = CryptoUtils.generateFixedKey(); // 获取或生成密钥
+                        String encryptedText = CryptoUtils.encrypt(mNoteEditor.getText().toString(), key);
+                        mNoteEditor.setText(encryptedText); // 显示加密后的文本
+                    } catch (Exception e) {
+                        e.printStackTrace(); // 异常处理
+                    }
+                }
+            });
+
+            // 设置取消按钮
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        } else if (item.getItemId() == R.id.menu_decrypt_content) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("输入密钥字符串");
+
+            // 设置输入框
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            // 设置确定按钮
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String inputKeyString  = input.getText().toString();
+                    String currentKeyString = CryptoUtils.getKeyString();
+
+                    if (!inputKeyString.equals(currentKeyString)) {
+                        // 如果输入的密钥字符串与当前密钥字符串不同，显示警告
+                        Toast.makeText(NoteEditActivity.this, "密钥不正确，请重新输入！", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        mWorkingNote.decryptContent();
+                        try {
+                            SecretKey key = CryptoUtils.generateFixedKey(); // 获取或生成密钥
+                            String decryptedText = CryptoUtils.decrypt(mNoteEditor.getText().toString(), key);
+                            mNoteEditor.setText(decryptedText); // 显示解密后的文本
+                        } catch (Exception e) {
+                            e.printStackTrace(); // 异常处理
+                        }
+                    }
+                }
+            });
+
+            // 设置取消按钮
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
         }
+
         return true;
     }
 

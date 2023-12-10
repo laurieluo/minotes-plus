@@ -561,63 +561,56 @@ public class NoteEditActivity extends Activity implements OnClickListener,
         } else if (item.getItemId() == R.id.menu_pin_to_top) {
             mWorkingNote.pinToTop();
             mWorkingNote.setBgColorIdWithoutDate(ResourceParser.RED);
+            finish();
         } else if (item.getItemId() == R.id.menu_unpin_from_top) {
             mWorkingNote.unpinFromTop();
             mWorkingNote.setBgColorIdWithoutDate(ResourceParser.YELLOW);
+            finish();
         } else if (item.getItemId() == R.id.menu_encrypt_content) {
             mWorkingNote.encryptContent();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("输入密钥字符串");
-
+            builder.setTitle("Please type in password to encrypt.");
             // 设置输入框
             final EditText input = new EditText(this);
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             builder.setView(input);
-
-            // 设置确定按钮
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String keyString = input.getText().toString();
                     CryptoUtils.setKeyString(keyString); // 更新密钥字符串
-
                     try {
                         SecretKey key = CryptoUtils.generateFixedKey(); // 获取或生成密钥
                         String encryptedText = CryptoUtils.encrypt(mNoteEditor.getText().toString(), key);
                         mNoteEditor.setText(encryptedText); // 显示加密后的文本
                     } catch (Exception e) {
-                        e.printStackTrace(); // 异常处理
+                        e.printStackTrace();
                     }
+                    finish();
                 }
             });
-
-            // 设置取消按钮
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
                 }
             });
-
             builder.show();
         } else if (item.getItemId() == R.id.menu_decrypt_content) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("输入密钥字符串");
-
+            builder.setTitle("Please type in password to decrypt.");
             // 设置输入框
             final EditText input = new EditText(this);
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             builder.setView(input);
-            // 设置确定按钮
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String inputKeyString  = input.getText().toString();
                     String currentKeyString = CryptoUtils.getKeyString();
 
                     if (!inputKeyString.equals(currentKeyString)) {
-                        // 如果输入的密钥字符串与当前密钥字符串不同，显示警告
-                        Toast.makeText(NoteEditActivity.this, "密钥不正确，请重新输入！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(NoteEditActivity.this, "Wrong key, please retry.", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         mWorkingNote.decryptContent();
@@ -626,14 +619,15 @@ public class NoteEditActivity extends Activity implements OnClickListener,
                             String decryptedText = CryptoUtils.decrypt(mNoteEditor.getText().toString(), key);
                             mNoteEditor.setText(decryptedText); // 显示解密后的文本
                         } catch (Exception e) {
-                            e.printStackTrace(); // 异常处理
+                            e.printStackTrace();
                         }
+                        finish();
                     }
                 }
             });
 
             // 设置取消按钮
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();

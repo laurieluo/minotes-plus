@@ -171,6 +171,11 @@ public class Notes {
          * <P> Type : INTEGER </P>
          */
         public static final String PIN_TO_TOP = "pin_to_top";
+        /**
+         * The encrypt status
+         * <P> Type : INTEGER </P>
+         */
+        public static final String ENCRYPT = "encrypt";
     }
 
     public interface DataColumns {

@@ -58,4 +58,9 @@
         android:id="@+id/menu_unpin_from_top"
         android:title="@string/menu_unpin_from_top" />
 
+    <item
+        android:id="@+id/menu_encrypt_content"
+        android:title="@string/menu_encrypt_content" />
+
+
 </menu>

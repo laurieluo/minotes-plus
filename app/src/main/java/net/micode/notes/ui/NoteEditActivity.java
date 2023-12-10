@@ -551,6 +551,17 @@ public class NoteEditActivity extends Activity implements OnClickListener,
         } else if (item.getItemId() == R.id.menu_unpin_from_top) {
             mWorkingNote.unpinFromTop();
             mWorkingNote.setBgColorIdWithoutDate(ResourceParser.YELLOW);
+        } else if (item.getItemId() == R.id.menu_encrypt_content) {
+            //encrypt content
+            if (mWorkingNote.encryptStatus()) {
+
+                mWorkingNote.encryptContent();
+                mNoteEditor.setText("111111111");
+            }
+            else {
+                mWorkingNote.decryptContent();
+                mNoteEditor.setText("22222222");
+            }
         }
         return true;
     }

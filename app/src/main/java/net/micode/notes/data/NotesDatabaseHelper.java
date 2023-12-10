@@ -61,7 +61,8 @@ public class NotesDatabaseHelper extends SQLiteOpenHelper {
             NoteColumns.ORIGIN_PARENT_ID + " INTEGER NOT NULL DEFAULT 0," +
             NoteColumns.GTASK_ID + " TEXT NOT NULL DEFAULT ''," +
             NoteColumns.VERSION + " INTEGER NOT NULL DEFAULT 0," +
-            NoteColumns.PIN_TO_TOP + " INTEGER NOT NULL DEFAULT 0" +
+            NoteColumns.PIN_TO_TOP + " INTEGER NOT NULL DEFAULT 0," +
+            NoteColumns.ENCRYPT + " INTEGER NOT NULL DEFAULT 0" +
         ")";
 
     private static final String CREATE_DATA_TABLE_SQL =

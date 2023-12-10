@@ -56,6 +56,8 @@ public class WorkingNote {
 
     private int mPin;
 
+    private int mEncrypt;
+
     private Context mContext;
 
     private static final String TAG = "WorkingNote";
@@ -81,7 +83,8 @@ public class WorkingNote {
             NoteColumns.WIDGET_ID,
             NoteColumns.WIDGET_TYPE,
             NoteColumns.MODIFIED_DATE,
-            NoteColumns.PIN_TO_TOP
+            NoteColumns.PIN_TO_TOP,
+            NoteColumns.ENCRYPT
     };
 
     private static final int DATA_ID_COLUMN = 0;
@@ -106,6 +109,8 @@ public class WorkingNote {
 
     private static final int NOTE_PIN_TO_TOP_COLUMN = 6;
 
+    private static final int NOTE_ENCRYPT_COLUMN = 7;
+
     // New note construct
     private WorkingNote(Context context, long folderId) {
         mContext = context;
@@ -117,6 +122,7 @@ public class WorkingNote {
         mIsDeleted = false;
         mMode = 0;
         mPin = 0;
+        mEncrypt = 0;
         mWidgetType = Notes.TYPE_WIDGET_INVALIDE;
     }
 
@@ -144,6 +150,7 @@ public class WorkingNote {
                 mAlertDate = cursor.getLong(NOTE_ALERTED_DATE_COLUMN);
                 mModifiedDate = cursor.getLong(NOTE_MODIFIED_DATE_COLUMN);
                 mPin = cursor.getInt(NOTE_PIN_TO_TOP_COLUMN);
+                mEncrypt = cursor.getInt(NOTE_ENCRYPT_COLUMN);
             }
             cursor.close();
         } else {
@@ -186,10 +193,25 @@ public class WorkingNote {
     public void unpinFromTop() {
         mNote.setNoteValueWithoutDate(NoteColumns.PIN_TO_TOP, "0");
     }
+
+    public void encryptContent() {
+        mNote.setNoteValue(NoteColumns.ENCRYPT, String.valueOf(1));
+    }
+    public void decryptContent() {
+        mNote.setNoteValue(NoteColumns.ENCRYPT, String.valueOf(0));
+    }
+
+
     public boolean pinStatus() {
         System.out.println("mPin value: " + mPin);
         return mPin == 1;
     }
+
+    public boolean encryptStatus(){
+        System.out.println("mEncrypt value: " + mEncrypt);
+        return mEncrypt == 0;
+    }
+
 
     public static WorkingNote createEmptyNote(Context context, long folderId, int widgetId,
             int widgetType, int defaultBgColorId) {

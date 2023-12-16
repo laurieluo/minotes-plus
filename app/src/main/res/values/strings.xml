@@ -42,9 +42,9 @@
     <!--  Laurie added at 23.12.4  -->
     <string name="menu_pin_to_top">Pin to top</string>
     <string name="menu_unpin_from_top">Unpin from top</string>
-
     <string name="menu_encrypt_content">Encrypt</string>
     <string name="menu_decrypt_content">Decrypt</string>
+    <string name="menu_llm">AI Assistant</string>
 
     <string name="format_folder_files_count">(%d)</string>
     <string name="menu_create_folder">New Folder</string>

@@ -66,5 +66,8 @@
         android:id="@+id/menu_decrypt_content"
         android:title="@string/menu_decrypt_content" />
 
+    <item
+        android:id="@+id/menu_llm"
+        android:title="@string/menu_llm" />
 
 </menu>

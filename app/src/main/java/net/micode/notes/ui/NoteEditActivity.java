@@ -36,6 +36,7 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.BackgroundColorSpan;
 import android.text.InputType;
+import android.os.AsyncTask;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,6 +62,7 @@ import net.micode.notes.data.Notes.TextNote;
 import net.micode.notes.model.WorkingNote;
 import net.micode.notes.model.WorkingNote.NoteSettingChangedListener;
 import net.micode.notes.tool.DataUtils;
+import net.micode.notes.tool.OpenAIAPI;
 import net.micode.notes.tool.ResourceParser;
 import net.micode.notes.tool.ResourceParser.TextAppearanceResources;
 import net.micode.notes.ui.DateTimePickerDialog.OnDateTimeSetListener;
@@ -76,7 +78,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.crypto.SecretKey;
-
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class NoteEditActivity extends Activity implements OnClickListener,
         NoteSettingChangedListener, OnTextViewChangeListener {
@@ -635,9 +641,55 @@ public class NoteEditActivity extends Activity implements OnClickListener,
             });
 
             builder.show();
+        } else if (item.getItemId() == R.id.menu_llm) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Please type in your request.");
+            // 设置输入框
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String currentContent = mNoteEditor.getText().toString();
+                    String userRequest = input.getText().toString();
+                    chatWithAIAssistantAsync(currentContent, userRequest);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
         }
 
+
         return true;
+    }
+
+    private class ChatTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String content = params[0];
+            String request = params[1];
+            String prompt = "Please read the content delimited by triple " +
+                    "quotes('''), and complete or modify it recording to the instructions delimited by " +
+                    "double quotes(''). If possible, please remain the content format." +
+                    "'''" + content + "''', " + "''" + request + "''";
+            OpenAIAPI api = new OpenAIAPI();
+            return api.chat(prompt);
+//            return "hahaha";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            mNoteEditor.setText(result);
+        }
+    }
+
+    private void chatWithAIAssistantAsync(String content, String request) {
+        new ChatTask().execute(content, request);
     }
 
     private void setReminder() {

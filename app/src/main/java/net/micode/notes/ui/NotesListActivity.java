@@ -28,13 +28,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.InputType;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.Pair;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -76,7 +82,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class NotesListActivity extends Activity implements OnClickListener, OnItemLongClickListener {
     private static final int FOLDER_NOTE_LIST_QUERY_TOKEN = 0;
@@ -137,15 +145,22 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 调用父类的 onCreate 方法
         super.onCreate(savedInstanceState);
+
+        // 设置当前 Activity 使用的布局文件
         setContentView(R.layout.note_list);
+
+        // 初始化资源（可能在 initResources 方法中进行一些资源的初始化操作）
         initResources();
 
-        /**
-         * Insert an introduction when user firstly use this application
+        /*
+         * 当用户第一次使用该应用程序时，在此处插入介绍
+         * Insert an introduction when the user first uses this application
          */
         setAppInfoFromRawRes();
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -156,7 +171,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
+    //创建初始介绍文件 -> welcome to use MI UI
     private void setAppInfoFromRawRes() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (!sp.getBoolean(PREFERENCE_ADD_INTRODUCTION, false)) {
@@ -430,6 +445,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
 
     };
 
+    //这个方法的主要作用是根据当前文件夹 ID，选择不同的查询条件（selection），然后使用异步查询处理器 (BackgroundQueryHandler) 开始查询笔记列表。
     private void startAsyncNotesListQuery() {
         String selection = (mCurrentFolderId == Notes.ID_ROOT_FOLDER) ? ROOT_FOLDER_SELECTION
                 : NORMAL_SELECTION;
@@ -824,8 +840,130 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
 
     @Override
     public boolean onSearchRequested() {
-        startSearch(null, false, null /* appData */, false);
+        System.out.println("111111");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Please type in your request.");
+            // 设置输入框
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+//                    String currentContent = mNoteEditor.getText().toString();
+                    String userInput = input.getText().toString();
+//                    chatWithAIAssistantAsync(currentContent, userRequest);
+                    System.out.println(userInput);
+                    performSearch(userInput);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
         return true;
+    }
+
+
+    private void performSearch(String query) {
+        // 构建搜索条件以获取所有便签数据
+        String selection = NoteColumns.TYPE + " = ?";
+        String[] selectionArgs = new String[] {String.valueOf(Notes.TYPE_NOTE)};
+
+        // 执行查询
+        Cursor cursor = getContentResolver().query(
+                Notes.CONTENT_NOTE_URI,
+                NoteItemData.PROJECTION, // 使用 NoteItemData 的 PROJECTION
+                selection,
+                selectionArgs,
+                null);
+
+        // 处理查询结果
+        if (cursor != null) {
+            List<NoteItemData> results = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                NoteItemData data = new NoteItemData(this, cursor); // 使用当前上下文和游标创建 NoteItemData
+                results.add(data);
+            }
+            cursor.close();
+            showSearchResults(results, query); // 将查询字符串传递给 showSearchResults 方法
+        }
+    }
+    private void showSearchResults(List<NoteItemData> results, String query) {
+        // 创建一个 AlertDialog 来显示结果
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("搜索结果");
+
+        // 过滤和高亮显示结果
+        List<SpannableString> filteredResults = new ArrayList<>();
+        for (NoteItemData data : results) {
+            List<Pair<Integer, Integer>> matches = isFuzzyMatch(data.getSnippet(), query);
+            if (!matches.isEmpty()) {
+                SpannableString spannableSnippet = new SpannableString(data.getSnippet());
+                for (Pair<Integer, Integer> match : matches) {
+                    // 使用深黄色或其他深色调进行高亮
+                    spannableSnippet.setSpan(new ForegroundColorSpan(Color.rgb(255, 165, 0)), // 深黄色
+                            match.first, match.second, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                filteredResults.add(spannableSnippet);
+            }
+        }
+
+        // 将过滤后的结果转换为数组，以便在 AlertDialog 中显示
+        CharSequence[] resultsArray = new CharSequence[filteredResults.size()];
+        filteredResults.toArray(resultsArray);
+
+        builder.setItems(resultsArray, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                NoteItemData selectedData = results.get(which);
+                openNode(selectedData); // 使用选中的 NoteItemData 打开便签
+            }
+        });
+
+        // 显示对话框
+        builder.show();
+    }
+
+
+    private List<Pair<Integer, Integer>> isFuzzyMatch(String text, String query) {
+        List<Pair<Integer, Integer>> matchPositions = new ArrayList<>();
+
+        // 添加精确匹配的位置
+        int index = text.indexOf(query);
+        while (index >= 0) {
+            matchPositions.add(new Pair<>(index, index + query.length()));
+            index = text.indexOf(query, index + 1);
+        }
+
+        // 允许字符串中间多一个字母
+        for (int i = 0; i < text.length(); i++) {
+            StringBuilder sb = new StringBuilder(text);
+            sb.deleteCharAt(i);
+            index = sb.toString().indexOf(query);
+            while (index >= 0) {
+                matchPositions.add(new Pair<>(index, index + query.length()));
+                index = sb.toString().indexOf(query, index + 1);
+            }
+        }
+
+        // 允许字符串中间少一个字母
+        for (int i = 0; i <= text.length(); i++) {
+            for (char ch = 'a'; ch <= 'z'; ch++) {
+                StringBuilder sb = new StringBuilder(text);
+                sb.insert(i, ch);
+                index = sb.toString().indexOf(query);
+                while (index >= 0) {
+                    matchPositions.add(new Pair<>(index, index + query.length()));
+                    index = sb.toString().indexOf(query, index + 1);
+                }
+            }
+        }
+
+        return matchPositions;
     }
 
     private void exportNoteToText() {

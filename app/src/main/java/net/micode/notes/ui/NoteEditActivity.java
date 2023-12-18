@@ -219,6 +219,11 @@ public class NoteEditActivity extends Activity implements OnClickListener,
                 return false;
             } else {
                 mWorkingNote = WorkingNote.load(this, noteId);
+                ////
+                System.out.println("***noteId:");
+                System.out.println(noteId);
+                ////
+
                 if (mWorkingNote == null) {
                     Log.e(TAG, "load note failed with note id" + noteId);
                     finish();

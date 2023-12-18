@@ -133,12 +133,12 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
 
     private NoteItemData mFocusNoteDataItem;
 
-    private static final String NORMAL_SELECTION = NoteColumns.PARENT_ID + "=?";
+    private static final String NORMAL_SELECTION = "(" + NoteColumns.PARENT_ID + "=?)"+" AND (" + NoteColumns.SHOW + "= 1)";
 
-    private static final String ROOT_FOLDER_SELECTION = "(" + NoteColumns.TYPE + "<>"
+    private static final String ROOT_FOLDER_SELECTION = "((" + NoteColumns.TYPE + "<>"
             + Notes.TYPE_SYSTEM + " AND " + NoteColumns.PARENT_ID + "=?)" + " OR ("
             + NoteColumns.ID + "=" + Notes.ID_CALL_RECORD_FOLDER + " AND "
-            + NoteColumns.NOTES_COUNT + ">0)";
+            + NoteColumns.NOTES_COUNT + ">0)) AND (" + NoteColumns.SHOW + "= 1)";
 
     private final static int REQUEST_CODE_OPEN_NODE = 102;
     private final static int REQUEST_CODE_NEW_NODE  = 103;
@@ -894,38 +894,49 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
     }
     private void showSearchResults(List<NoteItemData> results, String query) {
         // 创建一个 AlertDialog 来显示结果
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("搜索结果");
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("搜索结果");
 
         // 过滤和高亮显示结果
-        List<SpannableString> filteredResults = new ArrayList<>();
+//        List<SpannableString> filteredResults = new ArrayList<>();
         for (NoteItemData data : results) {
+
             List<Pair<Integer, Integer>> matches = isFuzzyMatch(data.getSnippet(), query);
-            if (!matches.isEmpty()) {
-                SpannableString spannableSnippet = new SpannableString(data.getSnippet());
-//                for (Pair<Integer, Integer> match : matches) {
-//                    // 使用深黄色或其他深色调进行高亮
-//                    spannableSnippet.setSpan(new ForegroundColorSpan(Color.rgb(255, 165, 0)), // 深黄色
-//                            match.first, match.second, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                }
-                filteredResults.add(spannableSnippet);
+            if (matches.isEmpty()) {
+                ////
+                System.out.println("***getId:");
+                System.out.println(data.getId());
+
+                WorkingNote mWorkingNote;
+                mWorkingNote = WorkingNote.load(this, data.getId());
+                mWorkingNote.hide();
+                System.out.println("hidden");
+
+//                ////
+//                SpannableString spannableSnippet = new SpannableString(data.getSnippet());
+////                for (Pair<Integer, Integer> match : matches) {
+////                    // 使用深黄色或其他深色调进行高亮
+////                    spannableSnippet.setSpan(new ForegroundColorSpan(Color.rgb(255, 165, 0)), // 深黄色
+////                            match.first, match.second, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+////                }
+//                filteredResults.add(spannableSnippet);
             }
         }
 
-        // 将过滤后的结果转换为数组，以便在 AlertDialog 中显示
-        CharSequence[] resultsArray = new CharSequence[filteredResults.size()];
-        filteredResults.toArray(resultsArray);
-
-        builder.setItems(resultsArray, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                NoteItemData selectedData = results.get(which);
-                openNode(selectedData); // 使用选中的 NoteItemData 打开便签
-            }
-        });
-
-        // 显示对话框
-        builder.show();
+//        // 将过滤后的结果转换为数组，以便在 AlertDialog 中显示
+//        CharSequence[] resultsArray = new CharSequence[filteredResults.size()];
+//        filteredResults.toArray(resultsArray);
+//
+//        builder.setItems(resultsArray, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                NoteItemData selectedData = results.get(which);
+//                openNode(selectedData); // 使用选中的 NoteItemData 打开便签
+//            }
+//        });
+//
+//        // 显示对话框
+//        builder.show();
     }
 
 

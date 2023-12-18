@@ -58,6 +58,9 @@ public class WorkingNote {
 
     private int mEncrypt;
 
+    private int mShow;
+
+
     private Context mContext;
 
     private static final String TAG = "WorkingNote";
@@ -84,7 +87,8 @@ public class WorkingNote {
             NoteColumns.WIDGET_TYPE,
             NoteColumns.MODIFIED_DATE,
             NoteColumns.PIN_TO_TOP,
-            NoteColumns.ENCRYPT
+            NoteColumns.ENCRYPT,
+            NoteColumns.SHOW
     };
 
     private static final int DATA_ID_COLUMN = 0;
@@ -111,6 +115,9 @@ public class WorkingNote {
 
     private static final int NOTE_ENCRYPT_COLUMN = 7;
 
+    private static final int NOTE_SHOW_COLUMN = 8;
+
+
     // New note construct
     private WorkingNote(Context context, long folderId) {
         mContext = context;
@@ -123,6 +130,7 @@ public class WorkingNote {
         mMode = 0;
         mPin = 0;
         mEncrypt = 0;
+        mShow = 1;
         mWidgetType = Notes.TYPE_WIDGET_INVALIDE;
     }
 
@@ -151,6 +159,7 @@ public class WorkingNote {
                 mModifiedDate = cursor.getLong(NOTE_MODIFIED_DATE_COLUMN);
                 mPin = cursor.getInt(NOTE_PIN_TO_TOP_COLUMN);
                 mEncrypt = cursor.getInt(NOTE_ENCRYPT_COLUMN);
+                mShow = cursor.getInt(NOTE_SHOW_COLUMN);
             }
             cursor.close();
         } else {
@@ -187,6 +196,15 @@ public class WorkingNote {
             throw new IllegalArgumentException("Unable to find note's data with id " + mNoteId);
         }
     }
+    //
+    public void hide(){
+        mNote.setNoteValueWithoutDate(NoteColumns.SHOW, "0");
+    }
+
+    public void show(){
+        mNote.setNoteValueWithoutDate(NoteColumns.SHOW, "1");
+    }
+    //
     public void pinToTop() {
         mNote.setNoteValueWithoutDate(NoteColumns.PIN_TO_TOP, "1");
     }
@@ -204,6 +222,8 @@ public class WorkingNote {
 
     public boolean pinStatus() {
         System.out.println("mPin value: " + mPin);
+        System.out.println("mShow value: " + mShow);
+
         return mPin == 1;
     }
 

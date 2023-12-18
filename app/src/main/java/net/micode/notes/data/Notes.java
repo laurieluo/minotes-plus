@@ -176,6 +176,12 @@ public class Notes {
          * <P> Type : INTEGER </P>
          */
         public static final String ENCRYPT = "encrypt";
+        /**
+         * The show status
+         * <P> Type : INTEGER </P>
+         */
+        public static final String SHOW = "show";
+
     }
 
     public interface DataColumns {
@@ -245,7 +251,7 @@ public class Notes {
 
         /**
          * Generic data column, the meaning is {@link #MIMETYPE} specific, used for
-         * TEXT data type
+         * TEXT data type  DESC
          * <P> Type: TEXT </P>
          */
         public static final String DATA5 = "data5";

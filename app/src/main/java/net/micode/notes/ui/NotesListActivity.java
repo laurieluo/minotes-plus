@@ -903,11 +903,11 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
             List<Pair<Integer, Integer>> matches = isFuzzyMatch(data.getSnippet(), query);
             if (!matches.isEmpty()) {
                 SpannableString spannableSnippet = new SpannableString(data.getSnippet());
-                for (Pair<Integer, Integer> match : matches) {
-                    // 使用深黄色或其他深色调进行高亮
-                    spannableSnippet.setSpan(new ForegroundColorSpan(Color.rgb(255, 165, 0)), // 深黄色
-                            match.first, match.second, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
+//                for (Pair<Integer, Integer> match : matches) {
+//                    // 使用深黄色或其他深色调进行高亮
+//                    spannableSnippet.setSpan(new ForegroundColorSpan(Color.rgb(255, 165, 0)), // 深黄色
+//                            match.first, match.second, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                }
                 filteredResults.add(spannableSnippet);
             }
         }

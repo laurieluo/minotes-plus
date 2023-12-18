@@ -28,6 +28,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -87,6 +89,8 @@ import java.util.HashSet;
 import java.util.List;
 
 public class NotesListActivity extends Activity implements OnClickListener, OnItemLongClickListener {
+
+//    private NoteEditActivity nodeEdit;
     private static final int FOLDER_NOTE_LIST_QUERY_TOKEN = 0;
 
     private static final int FOLDER_LIST_QUERY_TOKEN      = 1;
@@ -613,16 +617,27 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    /**
+     * 显示创建或修改文件夹的对话框
+     *
+     * @param create true 表示创建文件夹，false 表示修改文件夹
+     */
     private void showCreateOrModifyFolderDialog(final boolean create) {
+        // 创建对话框构造器
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 使用自定义布局
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit_text, null);
         final EditText etName = (EditText) view.findViewById(R.id.et_foler_name);
         showSoftInput();
+
+        // 根据操作类型设置标题和初始文本
         if (!create) {
             if (mFocusNoteDataItem != null) {
                 etName.setText(mFocusNoteDataItem.getSnippet());
                 builder.setTitle(getString(R.string.menu_folder_change_name));
             } else {
+                // 如果长按数据项为空，记录错误并返回
                 Log.e(TAG, "The long click data item is null");
                 return;
             }
@@ -631,59 +646,91 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
             builder.setTitle(this.getString(R.string.menu_create_folder));
         }
 
+        // 设置对话框的确认和取消按钮
         builder.setPositiveButton(android.R.string.ok, null);
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                // 点击取消按钮时隐藏软键盘
                 hideSoftInput(etName);
             }
         });
 
+        // 显示对话框
         final Dialog dialog = builder.setView(view).show();
-        final Button positive = (Button)dialog.findViewById(android.R.id.button1);
+        final Button positive = (Button) dialog.findViewById(android.R.id.button1);
+
+        // 点击确认按钮时的事件处理
         positive.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+                // 隐藏软键盘
                 hideSoftInput(etName);
+
+                // 获取文件夹名
                 String name = etName.getText().toString();
+
+                // 检查文件夹名是否可见
                 if (DataUtils.checkVisibleFolderName(mContentResolver, name)) {
                     Toast.makeText(NotesListActivity.this, getString(R.string.folder_exist, name),
                             Toast.LENGTH_LONG).show();
                     etName.setSelection(0, etName.length());
                     return;
                 }
+
+                // 根据操作类型进行数据库操作
                 if (!create) {
                     if (!TextUtils.isEmpty(name)) {
+                        // 检查文件夹名是否为空
+                        // 如果文件夹名不为空，执行以下操作
+
+                        // 创建一个用于更新的 ContentValues 对象
                         ContentValues values = new ContentValues();
+
+                        // 将新的文件夹名放入 ContentValues
                         values.put(NoteColumns.SNIPPET, name);
+
+                        // 将文件夹类型设置为 Notes.TYPE_FOLDER
                         values.put(NoteColumns.TYPE, Notes.TYPE_FOLDER);
+
+                        // 将 LOCAL_MODIFIED 标记设置为 1，表示本地已修改
                         values.put(NoteColumns.LOCAL_MODIFIED, 1);
-                        mContentResolver.update(Notes.CONTENT_NOTE_URI, values, NoteColumns.ID
-                                + "=?", new String[] {
-                            String.valueOf(mFocusNoteDataItem.getId())
-                        });
+
+                        // 使用 ContentResolver 更新数据库中的文件夹信息
+                        mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                                values,                   // 更新的内容值
+                                NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                                new String[] {           // 更新条件的参数值
+                                        String.valueOf(mFocusNoteDataItem.getId()) // 使用 mFocusNoteDataItem 的 ID
+                                });
                     }
+
                 } else if (!TextUtils.isEmpty(name)) {
+                    // 创建新文件夹
                     ContentValues values = new ContentValues();
                     values.put(NoteColumns.SNIPPET, name);
                     values.put(NoteColumns.TYPE, Notes.TYPE_FOLDER);
                     mContentResolver.insert(Notes.CONTENT_NOTE_URI, values);
                 }
+
+                // 关闭对话框
                 dialog.dismiss();
             }
         });
 
+        // 如果文件夹名为空，禁用确认按钮
         if (TextUtils.isEmpty(etName.getText())) {
             positive.setEnabled(false);
         }
+
         /**
-         * When the name edit text is null, disable the positive button
+         * 当文件夹名编辑框内容为空时，禁用确认按钮
          */
         etName.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // TODO Auto-generated method stub
-
+                // TODO: 在文本改变之前的操作
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 根据文件夹名是否为空来启用或禁用确认按钮
                 if (TextUtils.isEmpty(etName.getText())) {
                     positive.setEnabled(false);
                 } else {
@@ -692,11 +739,11 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
             }
 
             public void afterTextChanged(Editable s) {
-                // TODO Auto-generated method stub
-
+                // TODO: 在文本改变之后的操作
             }
         });
     }
+
 
     @Override
     public void onBackPressed() {
@@ -833,7 +880,10 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         } else if (item.getItemId() == R.id.menu_new_note) {
             createNewNote();
         } else if (item.getItemId() == R.id.menu_search) {
+            searchBack();
             onSearchRequested();
+        } else if (item.getItemId() == R.id.menu_back) {
+            searchBack();
         }
         return true;
     }
@@ -853,6 +903,9 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
 //                    String currentContent = mNoteEditor.getText().toString();
                     String userInput = input.getText().toString();
 //                    chatWithAIAssistantAsync(currentContent, userRequest);
+                    if(userInput.isEmpty()){
+                        return;
+                    }
                     System.out.println(userInput);
                     performSearch(userInput);
                 }
@@ -867,7 +920,48 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         return true;
     }
 
+    private void searchBack() {
+        // 构建搜索条件以获取所有便签数据
+        String selection = NoteColumns.TYPE + " = ?";
+        String[] selectionArgs = new String[] {String.valueOf(Notes.TYPE_NOTE)};
 
+        // 执行查询
+        Cursor cursor = getContentResolver().query(
+                Notes.CONTENT_NOTE_URI,
+                NoteItemData.PROJECTION, // 使用 NoteItemData 的 PROJECTION
+                selection,
+                selectionArgs,
+                null);
+
+        // 处理查询结果
+        if (cursor != null) {
+            List<NoteItemData> results = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                NoteItemData data = new NoteItemData(this, cursor); // 使用当前上下文和游标创建 NoteItemData
+                results.add(data);
+            }
+            cursor.close();
+            for (NoteItemData data : results) {
+
+                System.out.println("***getId:");
+                System.out.println(data.getId());
+
+                ContentValues values = new ContentValues();
+
+                values.put(NoteColumns.SHOW, 1);
+
+                // 使用 ContentResolver 更新数据库中的文件夹信息
+                mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                        values,                   // 更新的内容值
+                        NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                        new String[] {           // 更新条件的参数值
+                                String.valueOf(data.getId()) // 使用 mFocusNoteDataItem 的 ID
+                        });
+
+            }
+
+        }
+    }
     private void performSearch(String query) {
         // 构建搜索条件以获取所有便签数据
         String selection = NoteColumns.TYPE + " = ?";
@@ -907,36 +1001,22 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
                 System.out.println("***getId:");
                 System.out.println(data.getId());
 
-                WorkingNote mWorkingNote;
-                mWorkingNote = WorkingNote.load(this, data.getId());
-                mWorkingNote.hide();
-                System.out.println("hidden");
+                ContentValues values = new ContentValues();
 
-//                ////
-//                SpannableString spannableSnippet = new SpannableString(data.getSnippet());
-////                for (Pair<Integer, Integer> match : matches) {
-////                    // 使用深黄色或其他深色调进行高亮
-////                    spannableSnippet.setSpan(new ForegroundColorSpan(Color.rgb(255, 165, 0)), // 深黄色
-////                            match.first, match.second, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-////                }
-//                filteredResults.add(spannableSnippet);
+                values.put(NoteColumns.SHOW, 0);
+
+                // 使用 ContentResolver 更新数据库中的文件夹信息
+                mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                        values,                   // 更新的内容值
+                        NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                        new String[] {           // 更新条件的参数值
+                                String.valueOf(data.getId()) // 使用 mFocusNoteDataItem 的 ID
+                        });
+
+
             }
         }
 
-//        // 将过滤后的结果转换为数组，以便在 AlertDialog 中显示
-//        CharSequence[] resultsArray = new CharSequence[filteredResults.size()];
-//        filteredResults.toArray(resultsArray);
-//
-//        builder.setItems(resultsArray, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                NoteItemData selectedData = results.get(which);
-//                openNode(selectedData); // 使用选中的 NoteItemData 打开便签
-//            }
-//        });
-//
-//        // 显示对话框
-//        builder.show();
     }
 
 
@@ -962,17 +1042,20 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         }
 
         // 允许字符串中间少一个字母
-        for (int i = 0; i <= text.length(); i++) {
-            for (char ch = 'a'; ch <= 'z'; ch++) {
-                StringBuilder sb = new StringBuilder(text);
-                sb.insert(i, ch);
-                index = sb.toString().indexOf(query);
-                while (index >= 0) {
-                    matchPositions.add(new Pair<>(index, index + query.length()));
-                    index = sb.toString().indexOf(query, index + 1);
+        if(query.length()>1){
+            for (int i = 0; i <= text.length(); i++) {
+                for (char ch = 'a'; ch <= 'z'; ch++) {
+                    StringBuilder sb = new StringBuilder(text);
+                    sb.insert(i, ch);
+                    index = sb.toString().indexOf(query);
+                    while (index >= 0) {
+                        matchPositions.add(new Pair<>(index, index + query.length()));
+                        index = sb.toString().indexOf(query, index + 1);
+                    }
                 }
             }
         }
+
 
         return matchPositions;
     }

@@ -45,6 +45,8 @@
     <string name="menu_encrypt_content">Encrypt</string>
     <string name="menu_decrypt_content">Decrypt</string>
     <string name="menu_llm">AI Assistant</string>
+    <string name="menu_back">Back</string>
+
 
     <string name="format_folder_files_count">(%d)</string>
     <string name="menu_create_folder">New Folder</string>

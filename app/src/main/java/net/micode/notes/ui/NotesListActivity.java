@@ -890,48 +890,47 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         } else if (item.getItemId() == R.id.menu_new_note) {
             createNewNote();
         } else if (item.getItemId() == R.id.menu_search) {
-            searchBack();
+            offSearchRequested();
             onSearchRequested();
         } else if (item.getItemId() == R.id.menu_back) {
-            searchBack();
+            offSearchRequested();
         }
         return true;
     }
 
     @Override
+    // 查找请求
     public boolean onSearchRequested() {
-        System.out.println("111111");
+        System.out.println("Start Search");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Please type in your request.");
-            // 设置输入框
-            final EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-//                    String currentContent = mNoteEditor.getText().toString();
-                    String userInput = input.getText().toString();
-//                    chatWithAIAssistantAsync(currentContent, userRequest);
-                    if(userInput.isEmpty()){
-                        return;
-                    }
-                    System.out.println(userInput);
-                    performSearch(userInput);
+        builder.setTitle("Please enter the keywords");
+        // 设置输入框
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String userInput = input.getText().toString();
+                if(userInput.isEmpty()){
+                    return;
                 }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            builder.show();
+//                System.out.println(userInput);
+                SearchProcess(userInput);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
         return true;
     }
 
     // 取消查询
-    private void searchBack() {
+    private void offSearchRequested() {
         // 查询找到所有note类型数据
         String selection = NoteColumns.TYPE + " = ?";
         String[] selectionArgs = new String[] {String.valueOf(Notes.TYPE_NOTE)};
@@ -977,103 +976,122 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
 
         }
     }
-    private void performSearch(String query) {
+    private void SearchProcess(String query) {
         // 构建搜索条件以获取所有便签数据
         String selection = NoteColumns.TYPE + " = ?";
-        String[] selectionArgs = new String[] {String.valueOf(Notes.TYPE_NOTE)};
+        String[] selectionArgs_note = new String[] {String.valueOf(Notes.TYPE_NOTE)};
+        String[] selectionArgs_folder = new String[] {String.valueOf(Notes.TYPE_FOLDER)};
 
-        // 执行查询
-        Cursor cursor = getContentResolver().query(
+
+        // 执行查询便签
+        Cursor cursor_note = getContentResolver().query(
                 Notes.CONTENT_NOTE_URI,
                 NoteItemData.PROJECTION, // 使用 NoteItemData 的 PROJECTION
                 selection,
-                selectionArgs,
+                selectionArgs_note,
+                null);
+
+        // 执行查询文件夹
+        Cursor cursor_folder = getContentResolver().query(
+                Notes.CONTENT_NOTE_URI,
+                NoteItemData.PROJECTION, // 使用 NoteItemData 的 PROJECTION
+                selection,
+                selectionArgs_folder,
                 null);
 
         // 处理查询结果
-        if (cursor != null) {
-            List<NoteItemData> results = new ArrayList<>();
-            while (cursor.moveToNext()) {
-                NoteItemData data = new NoteItemData(this, cursor); // 使用当前上下文和游标创建 NoteItemData
-                results.add(data);
+        if (cursor_note != null) {
+            // 获取便签结果
+            List<NoteItemData> results_note = new ArrayList<>();
+            while (cursor_note.moveToNext()) {
+                NoteItemData data = new NoteItemData(this, cursor_note); // 使用当前上下文和游标创建 NoteItemData
+                results_note.add(data);
             }
-            cursor.close();
-            for (NoteItemData data : results) {
+            cursor_note.close();
 
-                System.out.println("***getId:");
-                System.out.println(data.getId());
-                System.out.println("***parentId:");
-                System.out.println(data.getParentId());
+            // 获取文件夹结果
+            if (cursor_folder != null) {
 
-                ContentValues values = new ContentValues();
+                List<NoteItemData> results_folder = new ArrayList<>();
+                while (cursor_folder.moveToNext()) {
+                    NoteItemData data = new NoteItemData(this, cursor_folder); // 使用当前上下文和游标创建 NoteItemData
+                    results_folder.add(data);
+                }
+                cursor_note.close();
 
-                values.put(NoteColumns.SHOW, 0);
+                // 第一次遍历匹配文件夹名字
+                for (NoteItemData data : results_folder) {
 
-                // 使用 ContentResolver 更新数据库中的文件夹信息
-                mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
-                        values,                   // 更新的内容值
-                        NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
-                        new String[] {           // 更新条件的参数值
-                                String.valueOf(data.getParentId()) // 使用 mFocusNoteDataItem 的 ID
-                        });
+                    System.out.println("***folderHide:");
+                    System.out.println(data.getId());
+
+                    // FuzzMatch模糊匹配
+                    List<Pair<Integer, Integer>> matches = FuzzyMatch(data.getSnippet(), query);
+
+                    // 没有匹配到的便签设置为隐藏
+                    if (matches.isEmpty()) {
+
+                        System.out.println("***getId:");
+                        System.out.println(data.getId());
+
+                        ContentValues values = new ContentValues();
+                        values.put(NoteColumns.SHOW, 0); // 不可见
+
+                        mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                                values,                   // 更新的内容值
+                                NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                                new String[] {           // 更新条件的参数值
+                                        String.valueOf(data.getId())
+                                });
+                    }
+                }
+            }
 
 
+            // 第二次遍历用于匹配便签内容
+            for (NoteItemData data : results_note) {
+
+                // FuzzMatch模糊匹配
+                List<Pair<Integer, Integer>> matches = FuzzyMatch(data.getSnippet(), query);
+
+                // 没有匹配到的便签设置为隐藏
+                if (matches.isEmpty()) {
+
+                    System.out.println("***getId:");
+                    System.out.println(data.getId());
+
+                    ContentValues values = new ContentValues();
+                    values.put(NoteColumns.SHOW, 0); // 不可见
+
+                    mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                            values,                   // 更新的内容值
+                            NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                            new String[] {           // 更新条件的参数值
+                                    String.valueOf(data.getId())
+                            });
+                }
+                // 匹配到的便签将其父亲文件夹设置为可见
+                else {
+                    System.out.println("***getParentId:");
+                    System.out.println(data.getParentId());
+
+                    ContentValues values = new ContentValues();
+                    values.put(NoteColumns.SHOW, 1); // 可见
+
+                    mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                            values,                   // 更新的内容值
+                            NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                            new String[] {           // 更新条件的参数值
+                                    String.valueOf(data.getParentId())
+                            });
+                }
 
             }
-            showSearchResults(results, query); // 将查询字符串传递给 showSearchResults 方法
         }
     }
-    private void showSearchResults(List<NoteItemData> results, String query) {
-        // 创建一个 AlertDialog 来显示结果
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("搜索结果");
-
-        // 过滤和高亮显示结果
-//        List<SpannableString> filteredResults = new ArrayList<>();
-        for (NoteItemData data : results) {
-
-            List<Pair<Integer, Integer>> matches = isFuzzyMatch(data.getSnippet(), query);
-            if (matches.isEmpty()) {
-                ////
-                System.out.println("***getId:");
-                System.out.println(data.getId());
-
-                ContentValues values = new ContentValues();
-
-                values.put(NoteColumns.SHOW, 0);
-
-                // 使用 ContentResolver 更新数据库中的文件夹信息
-                mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
-                        values,                   // 更新的内容值
-                        NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
-                        new String[] {           // 更新条件的参数值
-                                String.valueOf(data.getId()) // 使用 mFocusNoteDataItem 的 ID
-                        });
 
 
-            } else {
-                System.out.println("***getParentId:");
-                System.out.println(data.getParentId());
-
-                ContentValues values = new ContentValues();
-
-                values.put(NoteColumns.SHOW, 1);
-
-                // 使用 ContentResolver 更新数据库中的文件夹信息
-                mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
-                        values,                   // 更新的内容值
-                        NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
-                        new String[] {           // 更新条件的参数值
-                                String.valueOf(data.getParentId()) // 使用 mFocusNoteDataItem 的 ID
-                        });
-            }
-
-        }
-
-    }
-
-
-    private List<Pair<Integer, Integer>> isFuzzyMatch(String text, String query) {
+    private List<Pair<Integer, Integer>> FuzzyMatch(String text, String query) {
         List<Pair<Integer, Integer>> matchPositions = new ArrayList<>();
 
         // 添加精确匹配的位置

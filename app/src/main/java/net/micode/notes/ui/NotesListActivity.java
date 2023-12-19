@@ -483,6 +483,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         }
     }
 
+    // 移动文件时文件夹选择
     private void showFolderListMenu(Cursor cursor) {
         AlertDialog.Builder builder = new AlertDialog.Builder(NotesListActivity.this);
         builder.setTitle(R.string.menu_title_select_folder);
@@ -798,6 +799,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         setResult(RESULT_OK, intent);
     }
 
+    // 监听器
     private final OnCreateContextMenuListener mFolderOnCreateContextMenuListener = new OnCreateContextMenuListener() {
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             if (mFocusNoteDataItem != null) {
@@ -818,6 +820,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
     }
 
     @Override
+    // 长按修改操作
     public boolean onContextItemSelected(MenuItem item) {
         if (mFocusNoteDataItem == null) {
             Log.e(TAG, "The long click data item is null");

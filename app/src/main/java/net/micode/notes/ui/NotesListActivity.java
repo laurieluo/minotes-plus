@@ -504,10 +504,20 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         builder.show();
     }
 
+    /*
+     * 创建新的笔记
+     */
     private void createNewNote() {
+        // 创建一个用于启动 NoteEditActivity 的 Intent
         Intent intent = new Intent(this, NoteEditActivity.class);
+
+        // 设置 Intent 的操作为插入或编辑
         intent.setAction(Intent.ACTION_INSERT_OR_EDIT);
+
+        // 将当前文件夹的 ID 放入 Intent 的额外数据中
         intent.putExtra(Notes.INTENT_EXTRA_FOLDER_ID, mCurrentFolderId);
+
+        // 使用 startActivityForResult 启动 NoteEditActivity，并等待结果
         this.startActivityForResult(intent, REQUEST_CODE_NEW_NODE);
     }
 
@@ -920,8 +930,9 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         return true;
     }
 
+    // 取消查询
     private void searchBack() {
-        // 构建搜索条件以获取所有便签数据
+        // 查询找到所有note类型数据
         String selection = NoteColumns.TYPE + " = ?";
         String[] selectionArgs = new String[] {String.valueOf(Notes.TYPE_NOTE)};
 
@@ -941,23 +952,27 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
                 results.add(data);
             }
             cursor.close();
+            // 对于查询到的每条信息进行处理
             for (NoteItemData data : results) {
 
-                System.out.println("***getId:");
-                System.out.println(data.getId());
-
+                // 设置show为1
                 ContentValues values = new ContentValues();
-
                 values.put(NoteColumns.SHOW, 1);
 
-                // 使用 ContentResolver 更新数据库中的文件夹信息
+                // 更新数据库中的的便签信息，实现将所有的便签展示
                 mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
                         values,                   // 更新的内容值
                         NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
                         new String[] {           // 更新条件的参数值
-                                String.valueOf(data.getId()) // 使用 mFocusNoteDataItem 的 ID
+                                String.valueOf(data.getId()) // 使用便签ID
                         });
-
+                // 更新数据库中的的便签的parent的便签信息，实现将所有文件夹展示
+                mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                        values,                   // 更新的内容值
+                        NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                        new String[] {           // 更新条件的参数值
+                                String.valueOf(data.getParentId()) // 使用便签的parentID
+                        });
             }
 
         }
@@ -983,6 +998,28 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
                 results.add(data);
             }
             cursor.close();
+            for (NoteItemData data : results) {
+
+                System.out.println("***getId:");
+                System.out.println(data.getId());
+                System.out.println("***parentId:");
+                System.out.println(data.getParentId());
+
+                ContentValues values = new ContentValues();
+
+                values.put(NoteColumns.SHOW, 0);
+
+                // 使用 ContentResolver 更新数据库中的文件夹信息
+                mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                        values,                   // 更新的内容值
+                        NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                        new String[] {           // 更新条件的参数值
+                                String.valueOf(data.getParentId()) // 使用 mFocusNoteDataItem 的 ID
+                        });
+
+
+
+            }
             showSearchResults(results, query); // 将查询字符串传递给 showSearchResults 方法
         }
     }
@@ -1014,7 +1051,23 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
                         });
 
 
+            } else {
+                System.out.println("***getParentId:");
+                System.out.println(data.getParentId());
+
+                ContentValues values = new ContentValues();
+
+                values.put(NoteColumns.SHOW, 1);
+
+                // 使用 ContentResolver 更新数据库中的文件夹信息
+                mContentResolver.update(Notes.CONTENT_NOTE_URI,   // 更新的 URI
+                        values,                   // 更新的内容值
+                        NoteColumns.ID + "=?",   // 更新的条件：根据 ID 进行更新
+                        new String[] {           // 更新条件的参数值
+                                String.valueOf(data.getParentId()) // 使用 mFocusNoteDataItem 的 ID
+                        });
             }
+
         }
 
     }

@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class OpenAIAPI {
     String chatEndpoint = "https://api.openai.com/v1/chat/completions";
-    String apiKey = "Bearer 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";
+    String apiKey = "Bearer YOUR_API_KEY_HERE";
     public String chat(String txt) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("model", "gpt-3.5-turbo");

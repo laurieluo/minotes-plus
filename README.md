@@ -17,5 +17,3 @@ please note that you should fill in your SDK path.
 ```
 sdk.dir= %YOUR_SDK_PATH
 ```
-
-## Contributors:
